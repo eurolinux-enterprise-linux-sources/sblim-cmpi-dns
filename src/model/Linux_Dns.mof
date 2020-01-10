@@ -1,0 +1,637 @@
+// ===================================================================
+// Title:	DNS Model
+// Filename:	Dns.mof
+// Date:	04/22/2004
+// Author:	Viktor Mihajlovski <mihajlov@de.ibm.com>
+// Contributor: Heidi Neumann <heidineu@de.ibm.com>
+// Contributor: Wolfgang taphorn <taphorn@de.ibm.com>
+// Contributor: Tony Gargya <gargya@de.ibm.com>
+// ===================================================================
+
+
+// ===================================================================
+// DNS Zone - Base class
+// ===================================================================
+[ Abstract, Description("Class representing DNS zones.")]
+class Linux_DnsZone : CIM_SettingData
+{
+  [Key,
+   Description("Zone identifier.")]
+  string Name;
+
+  [Description("Zone type. Valid types are: Master, Slave, Stub, "
+   "Forward, Hint."),
+   Values{"Unknown","Master","Slave","Stub","Forward","Hint"},
+   ValueMap{"0","1","2","3","4","5"}
+   ]
+  uint8 Type;
+
+};
+
+
+// ===================================================================
+// DNS Master Zone
+// ===================================================================
+
+[ Description("Class representing DNS zones of type Master.") ]
+class Linux_DnsMasterZone : Linux_DnsZone
+{
+  [Key,
+   Override("Name") ]
+  string Name;
+
+  [Override("Type"),
+   Description("Value = 1 for Type Master.") ]
+  uint8 Type = 1;
+
+  [Description("The zone file that contains the zone specific RR.") ]
+  string ZoneFile;
+
+  [Description("The default time to live value for Resource "
+   "Records (RR). TTL describes how long a RR can be cached, "
+   "before it should be discarded."),
+   Units("Seconds") ]
+  sint32 TTL;
+
+  [Description("The default behavior for forwarding requests."),
+   Values{"Unknown","Only","First"},
+   ValueMap{"0","1","2"} ]
+  uint8 Forward;
+  
+  // --- SOA Record --------------------------------------------------
+  [Description("IP Address of the authoritative server for this zone") ]
+   string Server;
+
+  [Description("The owner mail address for this zone") ]
+  string Contact;
+
+  [Description("Serial Number of syntax year month day version: "
+   "yyyymmddvv.") ]
+  string SerialNumber;
+
+  [Description("The time in seconds after a RR is refershed."),
+   Units("Seconds") ]
+  uint32 Refresh;
+
+  [Description("The time in seconds after a RR is retried."),
+   Units("Seconds") ]
+  uint32 Retry;
+
+  [Description("The time in seconds after a RR expires."),
+   Units("Seconds") ]
+  uint32 Expire;
+
+  [Description("The negative caching time to live. This controls "
+   "how long other servers will cache no-such-domain (NXDOMAIN) "
+   "responses from you. Max value is 3 hours (10800 sec)."),
+   Units("Seconds") ]
+  uint32 NegativeCachingTTL;
+};
+
+
+// ===================================================================
+// DNS Slave Zone
+// ===================================================================
+
+[ Description("Class representing DNS zones of type Slave.") ]
+class Linux_DnsSlaveZone : Linux_DnsZone
+{
+  [Key,
+   Override("Name") ]
+  string Name;
+
+  [Override("Type"),
+   Description("Value = 2 for Type Slave.") ]
+  uint8 Type = 2;
+
+  [Description("The zone file that contains the zone specific RR.") ]
+  string ZoneFile;
+
+  [Description("The default time to live value for Resource "
+   "Records (RR). TTL describes how long a RR can be cached, "
+   "before it should be discarded."),
+   Units("Seconds") ]
+  sint32 TTL;
+
+  [Description("The default behavior for forwarding requests."),
+   Values{"Unknown","Only","First"},
+   ValueMap{"0","1","2"} ]
+  uint8 Forward;
+ 
+};
+
+
+// ===================================================================
+// DNS Stub Zone
+// ===================================================================
+
+[ Description("Class representing DNS zones of type Stub.") ]
+class Linux_DnsStubZone : Linux_DnsZone
+{
+  [Key,
+   Override("Name") ]
+  string Name;
+
+  [Override("Type"),
+   Description("Value = 3 for Type Stub.") ]
+  uint8 Type = 3;
+
+  [Description("The zone file that contains the zone specific RR.") ]
+  string ZoneFile;
+
+  [Description("The default time to live value for Resource "
+   "Records (RR). TTL describes how long a RR can be cached, "
+   "before it should be discarded."),
+   Units("Seconds") ]
+  sint32 TTL;
+
+  [Description("The default behavior for forwarding requests."),
+   Values{"Unknown","Only","First"},
+   ValueMap{"0","1","2"} ]
+  uint8 Forward;
+ 
+};
+
+
+// ===================================================================
+// DNS Forward Zone
+// ===================================================================
+
+[ Description("Class representing DNS zones of type Forward.") ]
+class Linux_DnsForwardZone : Linux_DnsZone
+{
+  [Key,
+   Override("Name") ]
+  string Name;
+
+  [Override("Type"),
+   Description("Value = 4 for Type Forward.") ]
+  uint8 Type = 4;
+
+  [Description("The default behavior for forwarding requests."),
+   Values{"Unknown","Only","First"},
+   ValueMap{"0","1","2"} ]
+  uint8 Forward;
+};
+
+
+// ===================================================================
+// DNS Hint Zone
+// ===================================================================
+
+[ Description("Class representing DNS zones of type Hint.") ]
+class Linux_DnsHintZone : Linux_DnsZone
+{
+  [Key,
+   Override("Name") ]
+  string Name;
+
+  [Override("Type"),
+   Description("Value = 5 for Type Hint.") ]
+  uint8 Type = 5;
+
+  [Description("The zone file that contains the zone specific RR.") ]
+  string ZoneFile;
+
+  [Description("The default time to live value for Resource "
+   "Records (RR). TTL describes how long a RR can be cached, "
+   "before it should be discarded."),
+   Units("Seconds") ]
+  sint32 TTL;
+};
+
+
+// ===================================================================
+// DNS Resource Record
+// ===================================================================
+[ Description("Class representing DNS resource records.") ]
+class Linux_DnsResourceRecord : CIM_SettingData
+{
+  [Key, 
+   Propagated("Linux_DnsZone.Name"), 
+   Description("Zone identifier.") ]
+  string ZoneName;
+
+  [Key, 
+   Description("Record identifier.") ]
+  string Name;
+  
+  [Description("Specifies the time to live for the RR. TTL describes "
+   "how long a RR can be cached, before it should be discarded. If "
+   "specified, the value overrides the value set in DnsServie.TTL.") ]
+  sint32 TTL;	
+
+  [Description("An encoded value that identifies a protocol family "
+   "or instance of a protocol."),
+   Values{"Unknown","Internet","Hesiod","Chaos"},
+   ValueMap{"0","1","2","3"} ]
+  uint8 Family;
+
+  [Key,
+   Description("An encoded value that specifies the type of the "
+   "resource in this RR.")]
+  string Type;
+
+  [Key,
+   Description("Value depending on the type of the RR.") ]
+   string Value;	
+  
+};
+
+
+// ===================================================================
+// DNS Address Match List
+// ===================================================================
+[ Description("Class representing DNS Address Match Lists (ACL) as "
+  "defined by the DNS acl statement.") ]
+class Linux_DnsAddressMatchList : CIM_SettingData
+{
+  [Key, 
+   Description("Address Match List identifier. This MUST be unique "
+   "within the scope of the DNS Service.") ]
+  string Name;
+
+  [Description("The content of the address match list.") ]
+  string AddressMatchListElement[];
+
+  [Description("An encoded value that specifies the type of the "
+   "AddressList Elements."),
+   Values{"Unknown","PreDefined","IPv4","IPv6","IPPrefix","Key",
+          "NestedAddressMatchList"},
+   ValueMap{"0","1","2","3","4","5","6"} ]
+  uint8 AddressMatchListElementType[];
+};
+
+
+
+// ===================================================================
+// DNS Master
+// ===================================================================
+[ Description("Class representing Master as used in DNSZone syntax") ]
+class Linux_DnsMasters : CIM_SettingData
+{
+  [Key,
+   Description("Master identifier. This MUST be unique within the scope "
+   "of the DNS Service") ]
+  string Name;
+
+  [Description("The content of the masters.") ]
+  string MasterElement[];
+
+  [Description("An encoded value that specifies the type of the masters "
+   "element."),
+   Values{"Unknown","IPv4","IPv6","NestedMaster"},
+   ValueMap{"0","1","2","3"} ]
+  uint8 MasterElementType[];
+};
+
+
+
+// ===================================================================
+// DNS Forwarders
+// ===================================================================
+[ Description("Class representing Forwarders as used in DNSZone syntax") ]
+class Linux_DnsForwarders : CIM_SettingData
+{
+  [Key,
+   Description("Forwarders identifier. This MUST be unique within the scope "
+   "of the DNS Service") ]
+  string Name;
+
+  [Description("The content of the forwarders.") ]
+  string ForwardersElement[];
+
+  [Description("An encoded value that specifies the type of the forwarders "
+   "element."),
+   Values{"Unknown","IPv4","IPv6"},
+   ValueMap{"0","1","2"} ]
+  uint8 ForwardersElementType[];
+  
+};
+
+
+// ===================================================================
+//
+// Associations
+//
+// ===================================================================
+
+
+
+// ===================================================================
+// DNS Resource Record for a DNS Zone Association
+// ===================================================================
+[ Association,
+  Description("Association representing the DNS resource records, that have "
+  "been specified in the scope of their DNS zone.") ]
+class Linux_DnsResourceRecordsForZone : CIM_Component
+{
+  [Key, Override("GroupComponent")]
+  Linux_DnsZone REF GroupComponent;
+
+  [Key, Override("PartComponent")]
+  Linux_DnsResourceRecord REF PartComponent;
+};
+
+
+// ===================================================================
+// DNS Address Match List for a DNS Service Association
+// ===================================================================
+[ Association,
+  Description("Association representing the DNS Address Match Lists, "
+  "that have been specified in the scope of the DNS Service.") ]
+class Linux_DnsAddressMatchListsForService : CIM_Component
+{
+  [Key, Override("GroupComponent"),
+   Description("The scoping DNS Service.")]
+  Linux_DnsService REF GroupComponent;
+
+  [Key, Override("PartComponent")]
+  Linux_DnsAddressMatchList REF PartComponent;
+};
+
+
+// ===================================================================
+// Access Control List (ACL) for DNS Service Requests
+// ===================================================================
+
+[ Association,
+  Description("Association pointing to Address Match Lists, hosting "
+  "the list of elements that are allowed to support the request "
+  "type: query.") ]
+class Linux_DnsAllowQueryForService : CIM_Component
+{
+  [Key, Override("GroupComponent"),
+   Description("The scoping DNS Service.")]
+  Linux_DnsService REF GroupComponent;
+
+  [Key, Override("PartComponent")]
+  Linux_DnsAddressMatchList REF PartComponent;
+};
+
+[ Association,
+  Description("Association pointing to Address Match Lists, hosting "
+  "the list of elements that are allowed to support the request "
+  "type: transfer.") ]
+class Linux_DnsAllowTransferForService : CIM_Component
+{
+  [Key, Override("GroupComponent"),
+   Description("The scoping DNS Service.")]
+  Linux_DnsService REF GroupComponent;
+
+  [Key, Override("PartComponent")]
+  Linux_DnsAddressMatchList REF PartComponent;
+};
+
+[ Association,
+  Description("Association pointing to Address Match Lists, hosting "
+  "the list of elements that are allowed to support the request "
+  "type: recursion.") ]
+class Linux_DnsAllowRecursionForService : CIM_Component
+{
+  [Key, Override("GroupComponent"),
+   Description("The scoping DNS Service.")]
+  Linux_DnsService REF GroupComponent;
+
+  [Key, Override("PartComponent")]
+  Linux_DnsAddressMatchList REF PartComponent;
+};
+
+[ Association,
+  Description("Association pointing to Address Match Lists, hosting "
+  "the list of elements that are allowed to support the request "
+  "type: notify.") ]
+class Linux_DnsAllowNotifyForService : CIM_Component
+{
+  [Key, Override("GroupComponent"),
+   Description("The scoping DNS Service.")]
+  Linux_DnsService REF GroupComponent;
+
+  [Key, Override("PartComponent")]
+  Linux_DnsAddressMatchList REF PartComponent;
+};
+
+[ Association,
+  Description("Association pointing to Address Match Lists, hosting "
+  "the list of elements that are allowed to support the request "
+  "type: blackhole.") ]
+class Linux_DnsBlackholeForService : CIM_Component
+{
+  [Key, Override("GroupComponent"),
+   Description("The scoping DNS Service.")]
+  Linux_DnsService REF GroupComponent;
+
+  [Key, Override("PartComponent")]
+  Linux_DnsAddressMatchList REF PartComponent;
+};
+
+
+// ===================================================================
+// Access Control List (ACL) for Zone Requests
+// ===================================================================
+
+[ Association,
+  Description("Association pointing to Address Match Lists, hosting "
+  "the list of elements that are allowed to support the request "
+  "type: allow-query.") ]
+class Linux_DnsAllowQueryForZone : CIM_Component
+{
+  [Key, Override("GroupComponent"),
+   Description("The scoping DNS Zone.")]
+  Linux_DnsZone REF GroupComponent;
+
+  [Key, Override("PartComponent")]
+  Linux_DnsAddressMatchList REF PartComponent;
+};
+
+[ Association,
+  Description("Association pointing to Address Match Lists, hosting "
+  "the list of elements that are allowed to support the request "
+  "type: allow-transfer.") ]
+class Linux_DnsAllowTransferForZone : CIM_Component
+{
+  [Key, Override("GroupComponent"),
+   Description("The scoping DNS Zone.")]
+  Linux_DnsZone REF GroupComponent;
+
+  [Key, Override("PartComponent")]
+  Linux_DnsAddressMatchList REF PartComponent;
+};
+
+[ Association,
+  Description("Association pointing to Address Match Lists, hosting "
+  "the list of elements that are allowed to support the request "
+  "type: allow-notify.") ]
+class Linux_DnsAllowNotifyForZone : CIM_Component
+{
+  [Key, Override("GroupComponent"),
+   Description("The scoping DNS Zone.")]
+  Linux_DnsZone REF GroupComponent;
+
+  [Key, Override("PartComponent")]
+  Linux_DnsAddressMatchList REF PartComponent;
+};
+
+[ Association,
+  Description("Association pointing to Address Match Lists, hosting "
+  "the list of elements that are allowed to support the request "
+  "type: allow-update.") ]
+class Linux_DnsAllowUpdateForZone : CIM_Component
+{
+  [Key, Override("GroupComponent"),
+   Description("The scoping DNS Zone.")]
+  Linux_DnsZone REF GroupComponent;
+
+  [Key, Override("PartComponent")]
+  Linux_DnsAddressMatchList REF PartComponent;
+};
+
+
+
+// ===================================================================
+// DNS Masters of Service
+// ===================================================================
+[ Association,
+  Description("Association pointing to the Masters, from the "
+  "Service.") ]
+class Linux_DnsMastersForService : CIM_Component
+{
+  [Key, Override("GroupComponent"),
+   Description("The scoping DNS Service.")]
+  Linux_DnsService REF GroupComponent;
+
+  [Key, Override("PartComponent"),
+   Description("The referenced Master")]
+  Linux_DnsMasters REF PartComponent;
+};
+
+
+
+// ===================================================================
+// DNS Masters of Slave or Stub Zone
+// ===================================================================
+
+[ Association,
+  Description("Association pointing to the Masters, managing this "
+  "Zone. The Zone can be of type Slave or Stub.") ]
+class Linux_DnsMastersForZone : CIM_Component
+{
+  [Key, Override("GroupComponent"),
+   Description("The scoping DNS Slave or Stub Zone.")]
+  Linux_DnsZone REF GroupComponent;
+
+  [Key, Override("PartComponent"),
+   Description("The referenced Master")]
+  Linux_DnsMasters REF PartComponent;
+};
+
+
+// ===================================================================
+// DNS Forwarders For Service
+// ===================================================================
+[ Association,
+  Description("Association pointing to the Forwarders, from the "
+  "Service.") ]
+class Linux_DnsForwardersForService : CIM_Component
+{
+  [Key, Override("GroupComponent"),
+   Description("The scoping DNS Service.")]
+  Linux_DnsService REF GroupComponent;
+
+  [Key, Override("PartComponent"),
+   Description("The referenced Forwarders")]
+  Linux_DnsForwarders REF PartComponent;
+};
+
+
+
+// ===================================================================
+// DNS Forwarders For Zone
+// ===================================================================
+[ Association,
+  Description("Association pointing to the Forwarders, from the "
+  "Zone.") ]
+class Linux_DnsForwardersForZone : CIM_Component
+{
+  [Key, Override("GroupComponent"),
+   Description("The scoping DNS Zone.")]
+  Linux_DnsZone REF GroupComponent;
+
+  [Key, Override("PartComponent"),
+   Description("The referenced Forwarders")]
+  Linux_DnsForwarders REF PartComponent;
+};
+
+
+
+// ===================================================================
+// DNS Configuration
+// ===================================================================
+[ Description("Class representing the DNS service base configuration. "
+	      "The configuration class is the anchor for DNS settings. " ) ]
+class Linux_DnsServiceConfiguration : CIM_Configuration
+{
+  [Override("Name"),
+   Key, 
+   Description("Id of the DNS Service this configuration is for.")]
+  string Name;
+
+  [Description("The full qualified name of the DNS Service "
+   "configuration file, e.g. /etc/named.conf.") ]
+  string ConfigurationFile;
+
+};
+
+// ===================================================================
+// DNS Setting
+// ===================================================================
+[ Description("Class representing the DNS service base configuration.") ]
+class Linux_DnsServiceSettingData : CIM_SettingData
+{
+  [Key, 
+   Description("Id of the DNS Service this setting applies to.")]
+  string Name;
+
+  [Description("The full qualified path to the directory containing "
+   "the configuration files, e.g. /etc/domain.") ]
+  string ConfigurationDirectory;
+
+  [Description("The default behavior for forwarding requests."),
+   Values{"Unknown","Only","First"},
+   ValueMap{"0","1","2"} ]
+  uint8 Forward;
+  
+  [Description("The transfer format that indicates, how updates are processed: incremental, complete."),
+   Values{"Unknown", "Incremental", "Complete"},
+   ValueMap{"0","1","2"} ]
+  uint8 XferFormat;
+  
+};
+
+// ===================================================================
+// DNS Service Configuration
+// ===================================================================
+[Description("Association between a DNS service and its configuration"),
+ Association ]
+class Linux_DnsServiceConfigurationForService : CIM_ElementConfiguration
+{
+  [Description("The DNS Service"), Override("Element")]
+  Linux_DnsService REF Element;
+  [Description("The DNS Service Configuration"), Override("Configuration")]
+  Linux_DnsServiceConfiguration REF Configuration;
+};
+
+// ===================================================================
+// DNS Setting Context
+// ===================================================================
+[Description("Association between DNS Configuration and Setting"), 
+ Association ]
+class Linux_DnsServiceSettingDataForServiceConfiguration : CIM_Component
+{
+  [Description("The DNS Service Configuration"), 
+   Override("GroupComponent")]
+  Linux_DnsServiceConfiguration REF GroupComponent;
+  [Description("The DNS Setting Data"), Override("PartComponent")]
+  Linux_DnsServiceSettingData REF PartComponent;
+};
+

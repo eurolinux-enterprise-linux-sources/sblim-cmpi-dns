@@ -1,0 +1,35 @@
+********************************************************************************
+association : Linux_DnsAllowQueryForZone
+objectPath : Linux_DnsAllowQueryForZone.GroupComponent=Linux_DnsZone.InstanceID="named",Name="elephant.testing.com",PartComponent=Linux_DnsAddressMatchList.InstanceID="named",Name="zone::elephant.testing.com::allow-query" GroupComponent=Linux_DnsZone.InstanceID="named",Name="elephant.testing.com",PartComponent=Linux_DnsAddressMatchList.InstanceID="named",Name="zone::elephant.testing.com::allow-query"
+sourceRole : GroupComponent
+targetRole : PartComponent
+sourceClass : Linux_DnsZone
+targetClass : Linux_DnsAddressMatchList
+
+--------------------------------------------------------------------------------
+Instance                                                       enumInstanceNames
+
+--------------------------------------------------------------------------------
+Instance                                                           enumInstances
+
+--------------------------------------------------------------------------------
+Instance                                                                     get
+
+--------------------------------------------------------------------------------
+Instance                                                                     set
+
+--------------------------------------------------------------------------------
+Instance                                                                  delete
+
+--------------------------------------------------------------------------------
+Association                                                          associators
+
+--------------------------------------------------------------------------------
+Association                                                      associatorNames
+
+--------------------------------------------------------------------------------
+Association                                                           references
+
+--------------------------------------------------------------------------------
+Association                                                       referenceNames
+

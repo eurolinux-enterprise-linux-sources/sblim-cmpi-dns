@@ -1,0 +1,35 @@
+********************************************************************************
+association : Linux_DnsAllowUpdateForZone
+objectPath : Linux_DnsAllowUpdateForZone.GroupComponent=Linux_DnsZone.InstanceID="named",Name="localdomain",PartComponent=Linux_DnsAddressMatchList.InstanceID="named",Name="zone::localdomain::allow-update" GroupComponent=Linux_DnsZone.InstanceID="named",Name="localdomain",PartComponent=Linux_DnsAddressMatchList.InstanceID="named",Name="zone::localdomain::allow-update"
+sourceRole : GroupComponent
+targetRole : PartComponent
+sourceClass : Linux_DnsZone
+targetClass : Linux_DnsAddressMatchList
+
+--------------------------------------------------------------------------------
+Instance                                                       enumInstanceNames
+
+--------------------------------------------------------------------------------
+Instance                                                           enumInstances
+
+--------------------------------------------------------------------------------
+Instance                                                                     get
+
+--------------------------------------------------------------------------------
+Instance                                                                     set
+
+--------------------------------------------------------------------------------
+Instance                                                                  delete
+
+--------------------------------------------------------------------------------
+Association                                                          associators
+
+--------------------------------------------------------------------------------
+Association                                                      associatorNames
+
+--------------------------------------------------------------------------------
+Association                                                           references
+
+--------------------------------------------------------------------------------
+Association                                                       referenceNames
+

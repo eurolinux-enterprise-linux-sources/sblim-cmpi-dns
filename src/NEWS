@@ -1,0 +1,50 @@
+Changes in 1.0-1
+==============================================================================
+- Change licensing from CPL to EPL
+
+Changes in 0.5.6-1
+==============================================================================
+- Maintenance release
+
+Changes in 0.5.5-1
+==============================================================================
+- cmpi-dns: Includes fixes testsuite issues  
+
+Changes in 0.5.4-1
+==============================================================================
+- 1939841  cmpi-dns: Registered Profile support 
+
+Changes in 0.5.3-1
+==============================================================================
+- 1845494  cmpi-dns: Include proper group definition for RPM build
+- 1815304  cmpi-dns: Man page for the dns specific config file
+- 1814089  cmpi-dns: Enhancements to build process
+
+Changes in 0.5.2-1
+==============================================================================
+- 1794655  cmpi-dns: Include information on WBEM-SMT client app
+- 1794680  cmpi-dns: base tests on current delivered testsuite
+
+Changes in 0.5.1-1
+==============================================================================
+- 1778811  cmpi-dns: wrong file permissions to config files
+- 1778739  cmpi-dns: port for masters is not set properly
+- 1777802  cmpi-dns: returning undefined error codes
+
+Changes in 0.5.0-1
+==============================================================================
+- 1764890  cmpi-dns: More specific on package content
+- 1763586  cmpi-dns: Empty String arrays are not processed correct
+- 1762058  cmpi-dns: Type conversion issue for string arrays
+- 1747731  cmpi-dns: Model upgrade for ECUTE 2.3.6 usage
+- 1746642  cmpi-dns: Cleanup for test cases
+- 1741423  cmpi-dns: modifyInst attribute is required for new TestSuite
+- 1741419  cmpi-dns: objectPath in test cases is incomplete
+- 1741418  cmpi-dns: reordered the test cases
+- 1739179  cmpi-dns: Unresolved symbols in service class
+
+Changes in 0.2.3-1
+==============================================================================
+- 1608730  cmpi-dns: Build does not pass 'make distcheck'
+- 1608764  cmpi-dns: Adding test cases
+- 1608767  cmpi-dns: Model changes
